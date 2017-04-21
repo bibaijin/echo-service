@@ -1,0 +1,27 @@
+appname: echo-service
+
+build:
+  base: golang:1.8
+  prepare:
+    version: 201704220021
+  script:
+    - mkdir -p $GOPATH/src/github.com/bibaijin/echo-service/
+    - cp -rf . $GOPATH/src/github.com/bibaijin/echo-service/
+    - cd $GOPATH/src/github.com/bibaijin/echo-service/ && go install
+
+release:
+  dest_base: registry.yxapp.xyz/centos:1.0.1
+  copy:
+    - src: $GOPATH/bin/echo-service
+      dest: /echod
+
+service.echod:
+  type: worker
+  cmd: /echod
+  port: 8080
+  memory: 64M
+  portal:
+    allow_clients: "**"
+    image: registry.yxapp.xyz/proxyd:release-1492781465-ac4cbdbc36b70fe93bde2f7db7233d5b84483efd
+    cmd: /proxyd -port 8080 -serviceproctype worker -serviceprocname echod
+    port: 8080
