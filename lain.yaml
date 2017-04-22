@@ -22,6 +22,6 @@ service.echod:
   memory: 64M
   portal:
     allow_clients: "**"
-    image: registry.yxapp.xyz/proxyd:release-1492781465-ac4cbdbc36b70fe93bde2f7db7233d5b84483efd
+    image: registry.yxapp.xyz/proxyd:release-1492830078-bcff1e1fa80ee8561a48f47e2ce7538421a3d83a
     cmd: /proxyd -port 8080 -serviceproctype worker -serviceprocname echod
     port: 8080

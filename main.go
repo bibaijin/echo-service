@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"syscall"
 )
@@ -32,7 +33,7 @@ func main() {
 		log.Fatalf("net.Listen failed, error: %s.", err)
 	}
 
-	infoLogger.Printf("net.Listen()..., port: %d.", 8080)
+	infoLogger.Printf("net.Listen() %s...", ":8080")
 
 	throttle := make(chan struct{}, MaxConnectionNum)
 	var wg sync.WaitGroup
@@ -82,7 +83,7 @@ func handle(conn io.ReadWriteCloser, quit chan os.Signal, throttle <-chan struct
 			running = false
 		}
 
-		infoLogger.Printf("Read a message: %s.", s)
+		infoLogger.Printf("Read a message: %s.", strings.TrimSpace(s))
 
 		n, err := buf.WriteString(s)
 		if err != nil {
@@ -90,7 +91,12 @@ func handle(conn io.ReadWriteCloser, quit chan os.Signal, throttle <-chan struct
 			running = false
 		}
 
-		infoLogger.Printf("Write %d bytes.", n)
+		if err = buf.Flush(); err != nil {
+			errLogger.Printf("buf.Flush() failed, error: %s.", err)
+			running = false
+		}
+
+		infoLogger.Printf("Write a response: %s, length: %d bytes.", strings.TrimSpace(s), n)
 
 		select {
 		case signal := <-quit:
