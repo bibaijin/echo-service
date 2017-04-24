@@ -19,9 +19,8 @@ service.echod:
   type: worker
   cmd: /echod
   port: 8080
-  memory: 64M
   portal:
     allow_clients: "**"
-    image: registry.yxapp.xyz/proxyd:release-1492830078-bcff1e1fa80ee8561a48f47e2ce7538421a3d83a
-    cmd: /proxyd -port 8080 -serviceproctype worker -serviceprocname echod
+    image: bibaijin/proxyd:1.0.0
+    cmd: /proxyd -port 8080 -serviceproctype worker -servicename echod
     port: 8080
